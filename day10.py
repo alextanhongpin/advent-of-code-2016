@@ -1,6 +1,7 @@
 from collections import defaultdict
 import re
 
+
 prog = re.compile(r'\d+')
 
 with open('input.txt') as f:
@@ -10,16 +11,13 @@ with open('input.txt') as f:
     processes = []
     cmp = defaultdict(int)
 
-    process = False
     for i in ins:
-        if not i.startswith('value'):
-            process = True
-        if process:
-            processes.append(i)
-        else:
+        if i.startswith('value'):
             v, bot = prog.findall(i)
             v, bot = int(v), int(bot)
             bots[bot].append(v)
+        else:
+            processes.append(i)
 
     while len(processes) > 0:
         i = processes.pop()
