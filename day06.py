@@ -2,12 +2,10 @@ from collections import Counter
 
 with open('input.txt') as f:
     data = f.read().splitlines()
-    part2 = ""
-    print('part 1:', end=' ')
+    p1, p2 = "", ""
     for row in list(zip(*data)):
         counter = Counter(row)
-        ch = counter.most_common(1)[0][0]
-        print(ch, end='')
-        part2 += counter.most_common()[-1][0][0]
-    print()
-    print("part 2:", part2)
+        p1 += counter.most_common(1)[0][0]
+        p2 += counter.most_common()[-1][0][0]
+    print("part 1:", p1)
+    print("part 2:", p2)
