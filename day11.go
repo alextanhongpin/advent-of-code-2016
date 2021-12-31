@@ -124,7 +124,8 @@ func bfs(floors map[int]Set) int {
 			if isFried(items) {
 				continue
 			}
-			if item.level > 1 {
+			// Move down with 1 item.
+			if item.level > 1 && len(items) == 1 {
 				newFloors := make(map[int]Set)
 				for k, v := range item.floors {
 					newFloors[k] = v
@@ -143,6 +144,7 @@ func bfs(floors map[int]Set) int {
 						steps:  item.steps + 1,
 						level:  item.level - 1,
 						floors: newFloors,
+						index:  item.index + 1,
 					}
 
 					if !isFried(newLower.List()) && !isFried(newCurr.List()) && !cache[newItem.String()] {
@@ -150,7 +152,8 @@ func bfs(floors map[int]Set) int {
 					}
 				}
 			}
-			if item.level < 4 {
+			// Move up with 2 items.
+			if item.level < 4 && len(items) == 2 {
 				newFloors := make(map[int]Set)
 				for k, v := range item.floors {
 					newFloors[k] = v
@@ -169,6 +172,7 @@ func bfs(floors map[int]Set) int {
 						steps:  item.steps + 1,
 						level:  item.level + 1,
 						floors: newFloors,
+						index:  item.index + 1,
 					}
 					if !isFried(newUpper.List()) && !isFried(newCurr.List()) && !cache[newItem.String()] {
 						heap.Push(&pq, newItem)
@@ -200,6 +204,7 @@ type Item struct {
 	floors map[int]Set
 	steps  int
 	level  int
+	index  int
 }
 
 func (it Item) String() string {
@@ -220,7 +225,23 @@ type PriorityQueue []*Item
 func (pq PriorityQueue) Len() int { return len(pq) }
 
 func (pq PriorityQueue) Less(i, j int) bool {
-	return pq[i].steps < pq[j].steps
+	lhs, rhs := pq[i], pq[j]
+	byIndex := lhs.index - rhs.index
+	byLevel := lhs.floors[4].Len() - rhs.floors[4].Len() // Focus on the 4th floor.
+	bySteps := lhs.steps - rhs.steps
+	_ = bySteps
+	_ = byIndex // Uncomment this for BFS.
+	// -tive byIndex means DFS.
+	return sortBy(-byIndex, -byLevel)
+}
+
+func sortBy(sc ...int) bool {
+	for _, s := range sc {
+		if s != 0 {
+			return s < 0
+		}
+	}
+	return false
 }
 
 func (pq PriorityQueue) Swap(i, j int) {
