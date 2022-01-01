@@ -125,7 +125,9 @@ func bfs(floors map[int]Set) int {
 				continue
 			}
 			// Move down with 1 item.
-			if item.level > 1 && len(items) == 1 {
+			if floors[1].Len() != 0 && // Skip if floor 1 is already emtpy
+				!(floors[1].Len() == 0 && floors[2].Len() == 0) && // Skip if floor 1+2 is already empty
+				item.level > 1 && len(items) == 1 {
 				newFloors := make(map[int]Set)
 				for k, v := range item.floors {
 					newFloors[k] = v
